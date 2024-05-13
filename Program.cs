@@ -24,7 +24,7 @@ app.UseCors(MyAllowSpecificOrigins);
 
 app.MapGet("/", () => {
 
-   var client = new PrtgClient("http://127.0.0.1", "prtgadmin", "prtgadmin",ignoreSSL: true);
+   var client = new PrtgClient("http://127.0.0.1", "ferid", "!BFPz7!dZWc0!3QE",ignoreSSL: true);
     client.RetryDelay = 3;
     var devices = client.GetDevices();
     return devices;
