@@ -22,7 +22,7 @@ var app = builder.Build();
 
 app.UseCors(MyAllowSpecificOrigins);
 
-app.MapGet("/", () => {
+app.MapGet("/devices", () => {
 
    var client = new PrtgClient("http://127.0.0.1", "ferid", "!BFPz7!dZWc0!3QE",ignoreSSL: true);
     client.RetryDelay = 3;
