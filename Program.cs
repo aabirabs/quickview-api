@@ -2,6 +2,7 @@ using PrtgAPI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text;
 
 
 var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -20,6 +21,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddSingleton<IPrtgClientService>(new PrtgClientService("http://127.0.0.1", "ferid", "!BFPz7!dZWc0!3QE"));
+builder.Services.AddSingleton<INotificationHandlerService, NotificationHandlerService>();
 
 var app = builder.Build();
 
@@ -35,6 +37,55 @@ app.MapGet("/sensors", (IPrtgClientService prtgClientService) => {
     var client = prtgClientService.GetPrtgClient();
     var sensors = client.GetSensors();
     return sensors;
+});
+
+// Register an endpoint to receive notifications
+app.MapPost("/notification", async (HttpContext context, INotificationHandlerService notificationHandler) =>
+{
+    using var reader = new StreamReader(context.Request.Body, Encoding.UTF8);
+    var requestBody = await reader.ReadToEndAsync();
+
+    // Handle the notification
+    var result = notificationHandler.HandleNotification(requestBody);
+
+    // Return a response if needed
+    await context.Response.WriteAsync(result);
+});
+
+app.MapGet("/alerts", async (HttpContext context,IPrtgClientService prtgClientService) =>
+{
+     var client = prtgClientService.GetPrtgClient();
+     try
+        {
+            var sensors = await client.GetSensorsAsync();
+
+            // Filter sensors that are in an alarm state
+            var alertSensors = sensors.Where(sensor => { 
+                //System.Console.WriteLine(Status);
+                return sensor.Status == Status.Down || sensor.Status == Status.Warning;});
+
+
+            // Convert sensor data to Alert objects
+            var alerts = alertSensors.Select(sensor => new Alert
+            {
+                Id = sensor.Id,
+                Name = sensor.Name,
+                Message = $"Sensor '{sensor.Name}' is {sensor.Status}",
+                Probe = sensor.Probe,
+                Group =sensor.Group,
+                Device=sensor.Device,
+                DisplayLastValue=sensor.DisplayLastValue
+            }).ToList();
+
+            return alerts;
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions
+            Console.WriteLine($"Error fetching alerts: {ex.Message}");
+            return new List<Alert>();
+        }
+
 });
 
 
