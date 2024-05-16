@@ -61,7 +61,6 @@ app.MapGet("/alerts", async (HttpContext context,IPrtgClientService prtgClientSe
 
             // Filter sensors that are in an alarm state
             var alertSensors = sensors.Where(sensor => { 
-                //System.Console.WriteLine(Status);
                 return sensor.Status == Status.Down || sensor.Status == Status.Warning;});
 
 
