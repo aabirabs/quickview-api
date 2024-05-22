@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
                       });
 });
 
-builder.Services.AddSingleton<IPrtgClientService>(new PrtgClientService("http://127.0.0.1", "ferid", "!BFPz7!dZWc0!3QE"));
+//builder.Services.AddSingleton<IPrtgClientService>(new PrtgClientService("http://127.0.0.1", "prtgadmin", "prtgadmin"));
 builder.Services.AddSingleton<INotificationHandlerService, NotificationHandlerService>();
 
 var app = builder.Build();
@@ -89,7 +89,6 @@ app.MapGet("/alerts", async (HttpContext context,IPrtgClientService prtgClientSe
 
 
 app.Run();
-
-
 //builder.Services.AddSingleton<IPrtgClientService>(new PrtgClientService("http://127.0.0.1", "ferid", "!BFPz7!dZWc0!3QE"));
+
 
