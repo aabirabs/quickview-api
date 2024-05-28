@@ -53,6 +53,14 @@ app.MapPost("/notification", async (HttpContext context, INotificationHandlerSer
     await context.Response.WriteAsync(result);
 });
 
+app.MapGet("/logs", async (IPrtgClientService prtgClientService) =>
+{
+    var client = prtgClientService.GetPrtgClient();
+    var logs = await client.GetLogsAsync();
+    return logs;
+});
+
+
 app.MapGet("/alerts", async (HttpContext context,IPrtgClientService prtgClientService) =>
 {
      var client = prtgClientService.GetPrtgClient();
