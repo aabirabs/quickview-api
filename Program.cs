@@ -96,6 +96,14 @@ app.MapGet("/alerts", async (HttpContext context,IPrtgClientService prtgClientSe
 
 });
 
+// New endpoint to get notification actions
+app.MapGet("/notificationActions",  (IPrtgClientService prtgClientService) =>
+{
+    var client = prtgClientService.GetPrtgClient();
+    var notificationActions =  client.GetNotificationActions();
+    return notificationActions;
+});
+
 
 app.Run();
 
